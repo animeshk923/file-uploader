@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post new message</title>
+  </head>
+  <body>
+    <%- include("partials/errors") %>
+    <h1>Post a NEW Message</h1>
+    <form action="/messageFormPost" method="POST">
+      <label for="title">Title</label>
+      <input id="title" name="title" placeholder="Post title" type="text" />
+      <br /><br />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" cols="40"></textarea>
+      <br /><br />
+
+      <button type="submit">Post</button>
+    </form>
+    <br /><br />
+
+    <a href="/">Go to Index</a>
+  </body>
+</html>
