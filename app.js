@@ -9,7 +9,7 @@ const {
   serializerFunction,
 } = require("./auth/serialization");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("./prisma/generated/prisma");
 
 require("dotenv").config();
 
@@ -29,7 +29,7 @@ app.use(
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
-    cookie: { maxAge: 15 * 24 * 60 * 60 * 1000 }, // 30 days
+    cookie: { maxAge: 15 * 24 * 60 * 60 * 1000 }, // 15 days
   })
 );
 

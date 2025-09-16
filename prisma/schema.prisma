@@ -21,7 +21,7 @@ model Session {
   data      String
   expiresAt DateTime
 }
-
+/// User model
 model User {
   id       Int      @id @default(autoincrement())
   fullName String

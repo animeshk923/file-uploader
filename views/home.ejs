@@ -8,24 +8,9 @@
   <body>
     <%- include('partials/logout') %> <br /><br />
 
-    Current User: <strong><%= locals.currentUser %></strong>
-
     <%- include('partials/errors') %> <br /><br />
     <!-- have a list of clubs by various users present here -->
-    Available clubs
-    <ol>
-      <% clubList.forEach(item => { %>
-      <li>
-        <h3><%= item.club_name %></h3>
-      </li>
-      <% }) %>
-    </ol>
 
     <br /><br />
-
-    <%- include('partials/userMessages') %>
-
-    <a href="/clubJoinGet">Join a club</a>
-    <a href="/messageFormGet">Create a new message</a>
   </body>
 </html>

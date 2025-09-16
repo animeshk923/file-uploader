@@ -6,14 +6,15 @@ function isAuth(req, res, next) {
   }
 }
 
-const club1 = 1234;
-const club2 = 4321;
-const club3 = 1221;
-const club4 = 1212;
+function isLoggedIn(req, res, next) {
+  if (!req.isAuthenticated()) {
+    next();
+  } else {
+    res.redirect("home");
+  }
+}
+
 module.exports = {
   isAuth,
-  club1,
-  club2,
-  club3,
-  club4,
+  isLoggedIn,
 };

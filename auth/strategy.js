@@ -1,15 +1,19 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
-const db = require("../db/queries");
+const { PrismaClient } = require("../prisma/generated/prisma");
+const prisma = new PrismaClient();
 
 const customFields = { usernameField: "email" };
 const verifyCallback = async (email, password, done) => {
   try {
-    const queryResult = await db.getUserCredentials(email);
-    const user = queryResult[0];
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
 
     if (!user) {
-      return done(null, false, { message: "Incorrect email" });
+      return done(null, false, { message: "User doesn't exists." });
     }
 
     const storedPass = user.password;
