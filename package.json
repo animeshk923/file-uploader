@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",
+    "@quixo3/prisma-session-store": "^3.1.13",
     "bcryptjs": "^3.0.2",
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.2.0",

@@ -8,8 +8,8 @@ const {
   deserializerFunction,
   serializerFunction,
 } = require("./auth/serialization");
-const pgSession = require("connect-pg-simple")(session);
-const pgPool = require("./db/pool");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+const { PrismaClient } = require("@prisma/client");
 
 require("dotenv").config();
 
@@ -19,18 +19,17 @@ app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: false }));
 
-const sessionStore = new pgSession({
-  pool: pgPool,
-  createTableIfMissing: true,
-});
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: sessionStore,
-    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+    cookie: { maxAge: 15 * 24 * 60 * 60 * 1000 }, // 30 days
   })
 );
 
