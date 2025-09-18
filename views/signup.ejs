@@ -14,7 +14,7 @@
     <% } else { %>
 
     <form action="/signup" method="POST">
-      <label for="fullName">First Name</label>
+      <label for="fullName">Full Name</label>
       <input id="fullName" name="fullName" placeholder="John" type="text" />
       <br /><br />
 
@@ -38,6 +38,8 @@
       <button type="submit">Sign Up</button>
     </form>
 
+    <p>Already registered?</p>
+    <a href="/login">Log In</a>
     <% } %>
   </body>
 </html>

@@ -10,7 +10,16 @@
 
     <%- include('partials/errors') %> <br /><br />
     <!-- have a list of clubs by various users present here -->
+    <h1>HOMEPAGE</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="upload_file" />
 
+      <br /><br />
+      <label for="fileName">File name</label>
+      <input type="text" name="fileName" id="fileName" />
+
+      <button type="submit">Upload File</button>
+    </form>
     <br /><br />
   </body>
 </html>

@@ -10,7 +10,7 @@ const emailErr = "must be a valid email";
 const passErr = "Password length should be at least 6 characters";
 const confirmPassErr = "Passwords don't match. please re-enter";
 const validateUser = [
-  body("firstName").trim().isAlpha().withMessage(`First name ${alphaErr}`),
+  body("fullName").trim().isAlpha().withMessage(`First name ${alphaErr}`),
   body("email").trim().isEmail().withMessage(`${emailErr}`),
   body("password").trim().isLength({ min: 6 }).withMessage(passErr),
   body("confirmPassword")
@@ -22,6 +22,10 @@ const validateUser = [
 
 async function signUpGet(req, res) {
   res.render("signup");
+}
+
+async function redirectSignUp(req, res) {
+  res.redirect("signup");
 }
 
 async function signUpPost(req, res, next) {
@@ -36,6 +40,8 @@ async function signUpPost(req, res, next) {
   const { fullName, email, password } = req.body;
 
   try {
+
+    // handle case where user is already registered so redirect them to login page
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.create({
@@ -59,13 +65,6 @@ async function logInGet(req, res) {
 }
 
 async function homepageGet(req, res) {
-  // const { email, user_id } = req.user;
-  // const clubs = await db.getAllClubDetails();
-  // const messages = await db.getAllMessages();
-  // const isClubMember = await db.userIsClubMember(email);
-  // const isAdmin = await db.userIsAdmin(user_id);
-  // const author = await db.getAuthorByUserId(user_id);
-  // const authorFullName = author[0].first_name + " " + author[0].last_name;
   res.render("home");
 }
 
@@ -78,9 +77,12 @@ async function logOutGet(req, res, next) {
   });
 }
 
-async function uploadFileGet(req, res) {
-  res.render("newMessage");
-}
+async function uploadFile(req, res, next) {
+    // req.file is the `avatar` file
+    // req.file;
+    // req.body will hold the text fields, if there were any
+    res.json({ message: "Successfully uploaded files" });
+  }
 
 async function uploadFilePost(req, res) {}
 
@@ -91,4 +93,6 @@ module.exports = {
   logOutGet,
   validateUser,
   homepageGet,
+  redirectSignUp,
+  uploadFile
 };

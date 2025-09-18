@@ -1,13 +1,17 @@
 const { Router } = require("express");
-const controller = require("../controllers/index");
 const appRoute = Router();
+const controller = require("../controllers/index");
 const passport = require("passport");
-const { isAuth, isLoggedIn } = require("../auth/authMiddleware");
+const { isAuth, isNotLoggedIn } = require("../auth/authMiddleware");
+const multer = require("multer");
+const upload = multer({ dest: "public/files/" });
 
-appRoute.get("/", isLoggedIn, controller.homepageGet);
-appRoute.get("/signup", isLoggedIn, controller.signUpGet);
+appRoute.post("/upload", upload.single("upload_file"), controller.uploadFile);
+
+appRoute.get("/", isNotLoggedIn, controller.redirectSignUp);
+appRoute.get("/signup", isNotLoggedIn, controller.signUpGet);
 appRoute.post("/signup", controller.validateUser, controller.signUpPost);
-appRoute.get("/login", isLoggedIn, controller.logInGet);
+appRoute.get("/login", isNotLoggedIn, controller.logInGet);
 appRoute.post(
   "/login",
   passport.authenticate("local", {

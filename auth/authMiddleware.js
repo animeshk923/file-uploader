@@ -6,7 +6,7 @@ function isAuth(req, res, next) {
   }
 }
 
-function isLoggedIn(req, res, next) {
+function isNotLoggedIn(req, res, next) {
   if (!req.isAuthenticated()) {
     next();
   } else {
@@ -16,5 +16,5 @@ function isLoggedIn(req, res, next) {
 
 module.exports = {
   isAuth,
-  isLoggedIn,
+  isNotLoggedIn,
 };
