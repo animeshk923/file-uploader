@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create new Folder</title>
+  </head>
+  <body>
+    <%- include('partials/logout') %> <br /><br />
+
+    <%- include('partials/errors') %> <br /><br />
+    <!-- have a list of clubs by various users present here -->
+    <h3>Create new folder</h3>
+    <form action="/newFolder" method="post">
+      <label for="folderName">Folder name</label>
+      <input type="text" name="folderName" id="folderName" />
+
+      <button type="submit">Create</button>
+    </form>
+    <br /><br />
+  </body>
+</html>

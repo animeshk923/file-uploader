@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("../prisma/generated/prisma");
 const prisma = new PrismaClient();
+const fs = require("node:fs");
 
 // Sign up validation
 const alphaErr = "must only contain letters.";
@@ -64,7 +65,10 @@ async function logInGet(req, res) {
 }
 
 async function homepageGet(req, res) {
-  res.render("home");
+  const userId = req.user.id;
+  console.log(userId);
+  const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  res.render("home", { userFolders: folders });
 }
 
 async function logOutGet(req, res, next) {
@@ -76,14 +80,46 @@ async function logOutGet(req, res, next) {
   });
 }
 
-async function uploadFile(req, res, next) {
-  // TODO: change filename to retain the original one. Remove this line after the task is achieved.
+async function uploadFile(req, res) {
   console.log(req.file);
   res.json({ message: "Successfully uploaded files" });
 }
 
-async function uploadFilePost(req, res) {}
+async function createFolderGet(req, res) {
+  console.log(req.user);
 
+  res.render("newFolder");
+}
+
+async function createFolderPost(req, res) {
+  console.log("req body:", req.body);
+  const { folderName } = req.body;
+
+  console.log("PWD:", process.cwd());
+  const userId = req.user.id;
+
+  const folderPath = `./public/userFolders/${userId}/${folderName}`;
+  try {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+      res.redirect("home");
+      // res.json({ message: "Folder created successfully!" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.json({ message: err });
+  }
+}
+
+async function userFolderGet(req, res) {
+  console.log(req.user);
+
+  res.render("newFolder");
+}
+
+async function handleOtherRoutes(req, res) {
+  res.json({ message: "404 NOT FOUND!" });
+}
 module.exports = {
   signUpGet,
   signUpPost,
@@ -93,4 +129,8 @@ module.exports = {
   homepageGet,
   redirectSignUp,
   uploadFile,
+  createFolderGet,
+  createFolderPost,
+  userFolderGet,
+  handleOtherRoutes,
 };

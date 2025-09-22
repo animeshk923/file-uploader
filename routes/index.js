@@ -14,8 +14,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-appRoute.post("/upload", upload.single("upload_file"), controller.uploadFile); // TODO: change filename to retain the original one. Remove this line after the task is achieved.
-
 appRoute.get("/", isNotLoggedIn, controller.redirectSignUp);
 appRoute.get("/signup", isNotLoggedIn, controller.signUpGet);
 appRoute.post("/signup", controller.validateUser, controller.signUpPost);
@@ -30,5 +28,13 @@ appRoute.post(
 );
 appRoute.get("/home", isAuth, controller.homepageGet);
 appRoute.get("/logout", isAuth, controller.logOutGet);
+appRoute.post("/upload", upload.single("upload_file"), controller.uploadFile);
+appRoute.get("/newFolder", isAuth, controller.createFolderGet);
+appRoute.post("/newFolder", isAuth, controller.createFolderPost);
+appRoute.get(
+  "/:fullName/folder/:folderName/file/:fileName",
+  controller.userFolderGet
+);
 
+appRoute.get("/{*splat}", controller.handleOtherRoutes);
 module.exports = appRoute;
