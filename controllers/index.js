@@ -66,6 +66,7 @@ async function logInGet(req, res) {
 
 async function homepageGet(req, res) {
   const userId = req.user.id;
+  // console.log("req.baseUrl", req.baseUrl);
   // console.log(userId);
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
   console.log("folders:", folders);
@@ -82,9 +83,21 @@ async function logOutGet(req, res, next) {
   });
 }
 
-async function uploadFile(req, res) {
+async function uploadFilePost(req, res) {
   // console.log(req.file);
-  res.json({ message: "Successfully uploaded files" });
+  const { fileName, folder_id } = req.body;
+  try {
+    await prisma.file.create({
+      data: {
+        fileName: fileName,
+        folderId: Number(folder_id),
+      },
+    });
+    res.json({ message: "Successfully uploaded files" });
+  } catch (err) {
+    console.error(err);
+    res.json({ message: err });
+  }
 }
 
 async function createFolderGet(req, res) {
@@ -127,8 +140,32 @@ async function createFolderPost(req, res) {
 
 async function userFolderGet(req, res) {
   // console.log(req.user);
+  const { folderId } = req.params;
+  try {
+    const files = await prisma.file.findMany({
+      where: {
+        folderId: Number(folderId),
+      },
+    });
+    console.log("files info:", files);
+    // console.log("req.baseUrl", req.baseUrl);
 
-  res.render("newFolder");
+    res.render("partials/userFiles", { files: files });
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: err });
+  }
+}
+
+async function userFilesGet(req, res) {
+  // console.log(req.user);
+  // const { folderId } = req.params;
+  // const files = await prisma.file.findMany({
+  //   where: {
+  //     folderId: folderId,
+  //   },
+  // });
+  // res.render("userFiles", { files: files });
 }
 
 async function handleOtherRoutes(req, res) {
@@ -142,9 +179,10 @@ module.exports = {
   validateUser,
   homepageGet,
   redirectSignUp,
-  uploadFile,
+  uploadFilePost,
   createFolderGet,
   createFolderPost,
   userFolderGet,
+  userFilesGet,
   handleOtherRoutes,
 };

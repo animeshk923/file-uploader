@@ -1,5 +1,5 @@
 <ul>
-  <% userFiles.forEach(item => { %>
-  <li></li>
+  <% files.forEach(item => { %>
+  <li><a href="file/<%= item.fileName %>"><%= item.fileName %></a></li>
   <% }) %>
 </ul>

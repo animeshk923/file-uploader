@@ -18,6 +18,17 @@
       <label for="fileName">File name</label>
       <input type="text" name="fileName" id="fileName" />
 
+      <br /><br />
+
+      <label for="cars">Choose folder:</label>
+
+      <select name="folder_id" id="folders">
+        <option value="">Select</option>
+        <% userFolders.forEach(item => { %>
+        <option value="<%= item.folderId %> "><%= item.folderName %></option>
+        <% }) %>
+      </select>
+
       <button type="submit">Upload File</button>
     </form>
 

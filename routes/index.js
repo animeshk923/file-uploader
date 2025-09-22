@@ -28,10 +28,12 @@ appRoute.post(
 );
 appRoute.get("/home", isAuth, controller.homepageGet);
 appRoute.get("/logout", isAuth, controller.logOutGet);
-appRoute.post("/upload", upload.single("upload_file"), controller.uploadFile);
+// appRoute.post("/upload", upload.single("upload_file"), controller.uploadFilePost);
+appRoute.post("/upload", upload.none(), controller.uploadFilePost);
 appRoute.get("/newFolder", isAuth, controller.createFolderGet);
 appRoute.post("/newFolder", isAuth, controller.createFolderPost);
-appRoute.get("/folder/:folderName/file/:fileName", controller.userFolderGet);
+appRoute.get("/folder/:folderId", controller.userFolderGet);
+appRoute.get("/folder/:folderId/file/:fileName", controller.userFilesGet);
 
 appRoute.get("/{*splat}", controller.handleOtherRoutes);
 module.exports = appRoute;
