@@ -31,10 +31,7 @@ appRoute.get("/logout", isAuth, controller.logOutGet);
 appRoute.post("/upload", upload.single("upload_file"), controller.uploadFile);
 appRoute.get("/newFolder", isAuth, controller.createFolderGet);
 appRoute.post("/newFolder", isAuth, controller.createFolderPost);
-appRoute.get(
-  "/:fullName/folder/:folderName/file/:fileName",
-  controller.userFolderGet
-);
+appRoute.get("/folder/:folderName/file/:fileName", controller.userFolderGet);
 
 appRoute.get("/{*splat}", controller.handleOtherRoutes);
 module.exports = appRoute;

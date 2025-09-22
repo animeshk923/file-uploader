@@ -1,5 +1,5 @@
 <ul>
   <% userFolders.forEach(item => { %>
-  <li></li>
+  <li><a href="/folder/<%= item.folderName %>"><%= item.folderName %></a></li>
   <% }) %>
 </ul>

@@ -66,8 +66,10 @@ async function logInGet(req, res) {
 
 async function homepageGet(req, res) {
   const userId = req.user.id;
-  console.log(userId);
+  // console.log(userId);
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  console.log("folders:", folders);
+
   res.render("home", { userFolders: folders });
 }
 
@@ -81,38 +83,50 @@ async function logOutGet(req, res, next) {
 }
 
 async function uploadFile(req, res) {
-  console.log(req.file);
+  // console.log(req.file);
   res.json({ message: "Successfully uploaded files" });
 }
 
 async function createFolderGet(req, res) {
-  console.log(req.user);
+  // console.log(req.user);
 
   res.render("newFolder");
 }
 
 async function createFolderPost(req, res) {
-  console.log("req body:", req.body);
+  // console.log("req body:", req.body);
   const { folderName } = req.body;
 
-  console.log("PWD:", process.cwd());
+  // console.log("typeof:", typeof folderName);
   const userId = req.user.id;
 
-  const folderPath = `./public/userFolders/${userId}/${folderName}`;
   try {
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath, { recursive: true });
-      res.redirect("home");
-      // res.json({ message: "Folder created successfully!" });
-    }
+    await prisma.folder.create({
+      data: {
+        userId: userId,
+        folderName: folderName,
+      },
+    });
+    res.json({ result: "FOLDER CREATED!" });
   } catch (err) {
     console.error(err);
     res.json({ message: err });
   }
+  // const folderPath = `./public/userFolders/${userId}/${folderName}`;
+  // try {
+  //   if (!fs.existsSync(folderPath)) {
+  //     fs.mkdirSync(folderPath, { recursive: true });
+  //     res.redirect("home");
+  //     // res.json({ message: "Folder created successfully!" });
+  //   }
+  // } catch (err) {
+  //   console.error(err);
+  //   res.json({ message: err });
+  // }
 }
 
 async function userFolderGet(req, res) {
-  console.log(req.user);
+  // console.log(req.user);
 
   res.render("newFolder");
 }

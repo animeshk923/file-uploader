@@ -20,11 +20,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.1
+ * Prisma Client JS version: 6.16.2
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.1",
+  client: "6.16.2",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -135,10 +135,14 @@ exports.Prisma.UserScalarFieldEnum = {
 };
 
 exports.Prisma.FolderScalarFieldEnum = {
-  userId: 'userId'
+  folderId: 'folderId',
+  userId: 'userId',
+  folderName: 'folderName'
 };
 
-exports.Prisma.FilesScalarFieldEnum = {
+exports.Prisma.FileScalarFieldEnum = {
+  fileId: 'fileId',
+  fileName: 'fileName',
   folderId: 'folderId'
 };
 
@@ -157,7 +161,7 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   User: 'User',
   Folder: 'Folder',
-  Files: 'Files'
+  File: 'File'
 };
 
 /**

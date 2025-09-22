@@ -35,11 +35,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.1
+ * Prisma Client JS version: 6.16.2
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.1",
+  client: "6.16.2",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -107,10 +107,14 @@ exports.Prisma.UserScalarFieldEnum = {
 };
 
 exports.Prisma.FolderScalarFieldEnum = {
-  userId: 'userId'
+  folderId: 'folderId',
+  userId: 'userId',
+  folderName: 'folderName'
 };
 
-exports.Prisma.FilesScalarFieldEnum = {
+exports.Prisma.FileScalarFieldEnum = {
+  fileId: 'fileId',
+  fileName: 'fileName',
   folderId: 'folderId'
 };
 
@@ -129,7 +133,7 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   User: 'User',
   Folder: 'Folder',
-  Files: 'Files'
+  File: 'File'
 };
 /**
  * Create the Client
@@ -160,17 +164,16 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
-  "clientVersion": "6.16.1",
+  "clientVersion": "6.16.2",
   "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -179,13 +182,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"LOCAL_DATABASE_URL\")\n}\n\n/// Session will be managed by PrismaSessionStore\nmodel Session {\n  id        String   @id\n  sid       String   @unique\n  data      String\n  expiresAt DateTime\n}\n\nmodel User {\n  id       Int      @id @default(autoincrement())\n  fullName String\n  email    String   @unique\n  password String // scalar field\n  Folder   Folder[]\n}\n\nmodel Folder {\n  folder_id User @relation(fields: [userId], references: [id])\n  userId    Int  @unique\n\n  Files Files[]\n}\n\nmodel Files {\n  file_id  Folder @relation(fields: [folderId], references: [userId])\n  folderId Int    @unique // scalar relational field\n}\n",
-  "inlineSchemaHash": "107549ea8eaeb8de0d459052cd5c2c5fc80fcca248427f0c6851dbf491c74fd2",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"LOCAL_DATABASE_URL\")\n}\n\n/// Session will be managed by PrismaSessionStore\nmodel Session {\n  id        String   @id\n  sid       String   @unique\n  data      String\n  expiresAt DateTime\n}\n\n/// User model\nmodel User {\n  id       Int      @id @default(autoincrement())\n  fullName String\n  email    String   @unique\n  password String // scalar field\n  Folder   Folder[]\n}\n\nmodel Folder {\n  folderId   Int    @id @unique @default(autoincrement())\n  userId     Int\n  folderName String @unique\n  folderUser User   @relation(fields: [userId], references: [id])\n  file       File[]\n}\n\nmodel File {\n  fileId     Int    @id @unique @default(autoincrement())\n  fileName   String @unique\n  folderId   Int // scalar relational field\n  fileFolder Folder @relation(fields: [folderId], references: [folderId])\n}\n",
+  "inlineSchemaHash": "6c74ac631e0cc500aaf65b1b8d3925206e4fca5e756db1b0784e5a7bbbee01fa",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"Folder\",\"kind\":\"object\",\"type\":\"Folder\",\"relationName\":\"FolderToUser\"}],\"dbName\":null},\"Folder\":{\"fields\":[{\"name\":\"folder_id\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FolderToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"Files\",\"kind\":\"object\",\"type\":\"Files\",\"relationName\":\"FilesToFolder\"}],\"dbName\":null},\"Files\":{\"fields\":[{\"name\":\"file_id\",\"kind\":\"object\",\"type\":\"Folder\",\"relationName\":\"FilesToFolder\"},{\"name\":\"folderId\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"Folder\",\"kind\":\"object\",\"type\":\"Folder\",\"relationName\":\"FolderToUser\"}],\"dbName\":null},\"Folder\":{\"fields\":[{\"name\":\"folderId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"folderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"folderUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FolderToUser\"},{\"name\":\"file\",\"kind\":\"object\",\"type\":\"File\",\"relationName\":\"FileToFolder\"}],\"dbName\":null},\"File\":{\"fields\":[{\"name\":\"fileId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fileName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"folderId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fileFolder\",\"kind\":\"object\",\"type\":\"Folder\",\"relationName\":\"FileToFolder\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
