@@ -40,7 +40,6 @@ async function signUpPost(req, res, next) {
   const { fullName, email, password } = req.body;
 
   try {
-
     // handle case where user is already registered so redirect them to login page
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -78,11 +77,10 @@ async function logOutGet(req, res, next) {
 }
 
 async function uploadFile(req, res, next) {
-    // req.file is the `avatar` file
-    // req.file;
-    // req.body will hold the text fields, if there were any
-    res.json({ message: "Successfully uploaded files" });
-  }
+  // TODO: change filename to retain the original one. Remove this line after the task is achieved.
+  console.log(req.file);
+  res.json({ message: "Successfully uploaded files" });
+}
 
 async function uploadFilePost(req, res) {}
 
@@ -94,5 +92,5 @@ module.exports = {
   validateUser,
   homepageGet,
   redirectSignUp,
-  uploadFile
+  uploadFile,
 };
