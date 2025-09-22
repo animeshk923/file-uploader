@@ -1,5 +1,9 @@
 <ul>
   <% files.forEach(item => { %>
-  <li><a href="file/<%= item.fileName %>"><%= item.fileName %></a></li>
+  <li>
+    <a href="/folder/<%= item.folderId %>/file/<%= item.fileName %>"
+      ><%= item.fileName %></a
+    >
+  </li>
   <% }) %>
 </ul>

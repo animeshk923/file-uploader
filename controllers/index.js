@@ -166,6 +166,7 @@ async function userFilesGet(req, res) {
   //   },
   // });
   // res.render("userFiles", { files: files });
+  res.json({ msg: "you reached here!" });
 }
 
 async function handleOtherRoutes(req, res) {
