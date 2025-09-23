@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("../prisma/generated/prisma");
 const prisma = new PrismaClient();
 const fs = require("node:fs");
-const { uploadToCloudinary } = require("../public/cloudinary");
 // import { v2 as cloudinary } from "cloudinary";
 const cloudinary = require("cloudinary").v2;
 // Sign up validation
@@ -89,12 +88,12 @@ async function uploadFilePost(req, res) {
   // console.log(req.file);
   const { fileName, folder_id } = req.body;
   try {
-    await prisma.file.create({
-      data: {
-        fileName: fileName,
-        folderId: Number(folder_id),
-      },
-    });
+    // await prisma.file.create({
+    //   data: {
+    //     fileName: fileName,
+    //     folderId: Number(folder_id),
+    //   },
+    // });
     res.json({ message: "Successfully uploaded files" });
   } catch (err) {
     console.error(err);
@@ -161,9 +160,34 @@ async function userFolderGet(req, res) {
 async function userFilesGet(req, res) {
   res.json({ msg: "you reached here!" });
 }
-async function uploadFileToCDN(req, res) {
-  uploadToCloudinary();
+
+async function uploadFileToCloudinary(req, res) {
+  const byteArrayBuffer = req.file.buffer;
+  const options = { use_filename: true };
+
+  new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(options, (error, uploadResult) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(uploadResult);
+      })
+      .end(byteArrayBuffer);
+  })
+    .then((uploadResult) => {
+      console.log(
+        `Buffer upload_stream wth promise success - ${uploadResult.public_id}`
+      );
+      console.log("upload result", uploadResult);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  res.json({ message: "Successfully uploaded files" });
 }
+
 async function handleOtherRoutes(req, res) {
   res.json({ message: "404 NOT FOUND!" });
 }
@@ -180,6 +204,6 @@ module.exports = {
   createFolderPost,
   userFolderGet,
   userFilesGet,
-  uploadFileToCDN,
+  uploadFileToCloudinary,
   handleOtherRoutes,
 };

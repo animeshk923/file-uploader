@@ -80,14 +80,29 @@ const getAssetInfo = async (publicId) => {
 // Main function
 //
 //////////////////
-async function uploadToCloudinary(imgPath) {
-  // Set the image to upload
-  const imagePath = imgPath;
+// async function uploadToCloudinary(imgPath) {
+//   // Set the image to upload
+//   const imagePath = imgPath;
 
-  // Upload the image
-  await uploadImage(imagePath);
+//   // Upload the image
+//   await uploadImage(imagePath);
 
-  console.log(getAssetInfo());
+//   console.log(getAssetInfo());
+// }
+
+function uploadToCloudinary() {
+  const byteArrayBuffer = fs.readFileSync("file.buffer");
+  new Promise((resolve) => {
+    cloudinary.v2.uploader
+      .upload_stream((error, uploadResult) => {
+        return resolve(uploadResult);
+      })
+      .end(byteArrayBuffer);
+  }).then((uploadResult) => {
+    console.log(
+      `Buffer upload_stream wth promise success - ${uploadResult.public_id}`
+    );
+  });
 }
 
 module.exports = { uploadToCloudinary };

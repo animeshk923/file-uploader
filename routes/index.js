@@ -4,8 +4,6 @@ const controller = require("../controllers/index");
 const passport = require("passport");
 const { isAuth, isNotLoggedIn } = require("../auth/authMiddleware");
 const multer = require("multer");
-const { uploadToCloudinary } = require("../public/cloudinary");
-var filePath = "";
 
 // const storage = multer.diskStorage({
 //   destination: "./public/files",
@@ -15,7 +13,7 @@ var filePath = "";
 //   },
 // });
 
-const storage = multer.memoryStorage()
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 appRoute.get("/", isNotLoggedIn, controller.redirectSignUp);
@@ -35,7 +33,8 @@ appRoute.get("/logout", isAuth, controller.logOutGet);
 appRoute.post(
   "/upload",
   upload.single("upload_file"),
-  controller.uploadFileToCDN
+  controller.uploadFileToCloudinary,
+  controller.uploadFilePost
 );
 // appRoute.post("/upload", upload.none(), controller.uploadFilePost);
 appRoute.get("/newFolder", isAuth, controller.createFolderGet);
