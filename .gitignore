@@ -138,3 +138,4 @@ dist
 *ca.pem
 
 /generated/prisma
+prisma/generated/prisma
