@@ -4,7 +4,9 @@ const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("../prisma/generated/prisma");
 const prisma = new PrismaClient();
 const fs = require("node:fs");
-
+const { uploadToCloudinary } = require("../public/cloudinary");
+// import { v2 as cloudinary } from "cloudinary";
+const cloudinary = require("cloudinary").v2;
 // Sign up validation
 const alphaErr = "must only contain letters.";
 const emailErr = "must be a valid email";
@@ -148,7 +150,6 @@ async function userFolderGet(req, res) {
       },
     });
     console.log("files info:", files);
-    // console.log("req.baseUrl", req.baseUrl);
 
     res.render("partials/userFiles", { files: files });
   } catch (err) {
@@ -158,17 +159,11 @@ async function userFolderGet(req, res) {
 }
 
 async function userFilesGet(req, res) {
-  // console.log(req.user);
-  // const { folderId } = req.params;
-  // const files = await prisma.file.findMany({
-  //   where: {
-  //     folderId: folderId,
-  //   },
-  // });
-  // res.render("userFiles", { files: files });
   res.json({ msg: "you reached here!" });
 }
-
+async function uploadFileToCDN(req, res) {
+  uploadToCloudinary();
+}
 async function handleOtherRoutes(req, res) {
   res.json({ message: "404 NOT FOUND!" });
 }
@@ -185,5 +180,6 @@ module.exports = {
   createFolderPost,
   userFolderGet,
   userFilesGet,
+  uploadFileToCDN,
   handleOtherRoutes,
 };

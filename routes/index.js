@@ -4,14 +4,18 @@ const controller = require("../controllers/index");
 const passport = require("passport");
 const { isAuth, isNotLoggedIn } = require("../auth/authMiddleware");
 const multer = require("multer");
+const { uploadToCloudinary } = require("../public/cloudinary");
+var filePath = "";
 
-const storage = multer.diskStorage({
-  destination: "./public/files",
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: "./public/files",
+//   filename: function (req, file, cb) {
+//     filePath = "./public/files/" + file.originalname;
+//     cb(null, file.originalname);
+//   },
+// });
 
+const storage = multer.memoryStorage()
 const upload = multer({ storage: storage });
 
 appRoute.get("/", isNotLoggedIn, controller.redirectSignUp);
@@ -28,12 +32,21 @@ appRoute.post(
 );
 appRoute.get("/home", isAuth, controller.homepageGet);
 appRoute.get("/logout", isAuth, controller.logOutGet);
-// appRoute.post("/upload", upload.single("upload_file"), controller.uploadFilePost);
-appRoute.post("/upload", upload.none(), controller.uploadFilePost);
+appRoute.post(
+  "/upload",
+  upload.single("upload_file"),
+  controller.uploadFileToCDN
+);
+// appRoute.post("/upload", upload.none(), controller.uploadFilePost);
 appRoute.get("/newFolder", isAuth, controller.createFolderGet);
 appRoute.post("/newFolder", isAuth, controller.createFolderPost);
-appRoute.get("/folder/:folderId", controller.userFolderGet);
-appRoute.get("/folder/:folderId/file/:fileName", controller.userFilesGet);
+appRoute.get("/folder/:folderId", isAuth, controller.userFolderGet);
+appRoute.get(
+  "/folder/:folderId/file/:fileName",
+  isAuth,
+  controller.userFilesGet
+);
+appRoute.get("/folder/:folderId/file/:fileName/details", isAuth);
 
 appRoute.get("/{*splat}", controller.handleOtherRoutes);
 module.exports = appRoute;
