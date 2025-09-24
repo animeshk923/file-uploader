@@ -67,7 +67,6 @@ async function logInGet(req, res) {
 
 async function homepageGet(req, res) {
   const userId = req.user.id;
-  // console.log("req.baseUrl", req.baseUrl);
   // console.log(userId);
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
   console.log("folders:", folders);
@@ -86,19 +85,38 @@ async function logOutGet(req, res, next) {
 
 async function uploadFilePost(req, res) {
   // console.log(req.file);
-  const { fileName, folder_id } = req.body;
+  const { folder_id } = req.body;
+  const fileName = req.file.originalname;
+  console.log("fileName:", fileName);
+
+  // create file link in database
   try {
-    // await prisma.file.create({
-    //   data: {
-    //     fileName: fileName,
-    //     folderId: Number(folder_id),
-    //   },
-    // });
-    res.json({ message: "Successfully uploaded files" });
+    await prisma.file.create({
+      data: {
+        fileName: fileName,
+        folderId: Number(folder_id),
+      },
+    });
+    // res.json({ message: "Successfully uploaded files" });
   } catch (err) {
     console.error(err);
     res.json({ message: err });
   }
+}
+
+async function deleteFileGet(req, res) {
+  const file_id = req.params.fileId;
+  console.log("fileId:", file_id);
+
+  try {
+    // delete link from database
+    await prisma.file.delete({ where: { fileId: Number(file_id) } });
+    // delete from cloudinary (implementation remaining)
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
+  }
+  res.status(200).json({ msg: "File deleted!" });
 }
 
 async function createFolderGet(req, res) {
@@ -126,17 +144,6 @@ async function createFolderPost(req, res) {
     console.error(err);
     res.json({ message: err });
   }
-  // const folderPath = `./public/userFolders/${userId}/${folderName}`;
-  // try {
-  //   if (!fs.existsSync(folderPath)) {
-  //     fs.mkdirSync(folderPath, { recursive: true });
-  //     res.redirect("home");
-  //     // res.json({ message: "Folder created successfully!" });
-  //   }
-  // } catch (err) {
-  //   console.error(err);
-  //   res.json({ message: err });
-  // }
 }
 
 async function userFolderGet(req, res) {
@@ -161,13 +168,15 @@ async function userFilesGet(req, res) {
   res.json({ msg: "you reached here!" });
 }
 
-async function uploadFileToCloudinary(req, res) {
+async function uploadFileToCloudinary(req, res, next) {
   const byteArrayBuffer = req.file.buffer;
-  const options = { use_filename: true };
+  console.log(req.file.originalname);
+  // const options = { use_filename: true };
+  // let file_info = "";
 
   new Promise((resolve, reject) => {
     cloudinary.uploader
-      .upload_stream(options, (error, uploadResult) => {
+      .upload_stream({ use_filename: true }, (error, uploadResult) => {
         if (error) {
           return reject(error);
         }
@@ -180,12 +189,24 @@ async function uploadFileToCloudinary(req, res) {
         `Buffer upload_stream wth promise success - ${uploadResult.public_id}`
       );
       console.log("upload result", uploadResult);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
 
-  res.json({ message: "Successfully uploaded files" });
+      // add secure media url to database
+      // addUrlToDB(uploadResult);
+      res.status(200).json({
+        message: "Successfully uploaded files",
+        fileInfo: uploadResult,
+        originalName: req.file.originalname,
+      });
+      next();
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(404).json({ error: err });
+    });
+}
+
+async function fileDetailsGet(req, res) {
+  res.render("partials/fileDetails");
 }
 
 async function handleOtherRoutes(req, res) {
@@ -205,5 +226,7 @@ module.exports = {
   userFolderGet,
   userFilesGet,
   uploadFileToCloudinary,
+  deleteFileGet,
+  fileDetailsGet,
   handleOtherRoutes,
 };

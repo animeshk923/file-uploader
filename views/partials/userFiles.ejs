@@ -1,4 +1,4 @@
-Files in 
+Your Files
 
 <ul>
   <% files.forEach(item => { %>
@@ -10,7 +10,15 @@ Files in
     <a href="/folder/<%= item.folderId %>/file/<%= item.fileName %>/details"
       >Show details</a
     >
-    <br /><br />
+    <br />
+    <a
+      href="/folder/<%= item.folderId %>/file/<%= item.fileName %>/<%= item.fileId %>/delete"
+      >Delete</a
+    >
   </li>
+
+  <br />
   <% }) %>
 </ul>
+
+<a href="/">Home</a>

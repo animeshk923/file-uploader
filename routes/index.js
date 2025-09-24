@@ -45,7 +45,16 @@ appRoute.get(
   isAuth,
   controller.userFilesGet
 );
-appRoute.get("/folder/:folderId/file/:fileName/details", isAuth);
+appRoute.get(
+  "/folder/:folderId/file/:fileName/details",
+  isAuth,
+  controller.fileDetailsGet
+);
+appRoute.get(
+  "/folder/:folderId/file/:fileName/:fileId/delete",
+  isAuth,
+  controller.deleteFileGet
+);
 
 appRoute.get("/{*splat}", controller.handleOtherRoutes);
 module.exports = appRoute;
