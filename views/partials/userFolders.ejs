@@ -1,5 +1,7 @@
 <ul>
   <% userFolders.forEach(item => { %>
   <li><a href="/folder/<%= item.folderId %>"><%= item.folderName %></a></li>
+  <li><a href="/folder/<%= item.folderId %>/update">Update folder info</a></li>
+  <br />
   <% }) %>
 </ul>

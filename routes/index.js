@@ -41,6 +41,21 @@ appRoute.get("/newFolder", isAuth, controller.createFolderGet);
 appRoute.post("/newFolder", isAuth, controller.createFolderPost);
 appRoute.get("/folder/:folderId", isAuth, controller.userFolderGet);
 appRoute.get(
+  "/folder/:folderId/update",
+  isAuth,
+  controller.updateUserFolderGet
+);
+appRoute.post(
+  "/folder/:folderId/update",
+  isAuth,
+  controller.updateUserFolderPost
+);
+appRoute.get(
+  "/folder/:folderId/delete",
+  isAuth,
+  controller.deleteUserFolderGet
+);
+appRoute.get(
   "/folder/:folderId/file/:fileName",
   isAuth,
   controller.userFilesGet

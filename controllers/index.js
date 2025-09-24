@@ -146,6 +146,7 @@ async function createFolderPost(req, res) {
   }
 }
 
+// render files inside the folder
 async function userFolderGet(req, res) {
   // console.log(req.user);
   const { folderId } = req.params;
@@ -162,6 +163,43 @@ async function userFolderGet(req, res) {
     console.log(err);
     res.json({ msg: err });
   }
+}
+
+async function updateUserFolderGet(req, res) {
+  res.render("updateFolder");
+}
+
+// update folder info
+async function updateUserFolderPost(req, res) {
+  const folder_name = req.body.folderName;
+  const folder_id = req.params.folderId;
+
+  try {
+    await prisma.folder.update({
+      data: { folderName: folder_name },
+      where: { folderId: folder_id },
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
+  }
+  res.json({ msg: "File info updated!" });
+}
+
+// delete folder (check implementation) (delete link implementation in ejs remaining)
+async function deleteUserFolderGet(req, res) {
+  const folder_id = req.params.folderId;
+  console.log("fileId:", file_id);
+
+  try {
+    // delete link from database
+    await prisma.folder.delete({ where: { folderId: Number(folder_id) } });
+    // delete from cloudinary (implementation remaining)
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
+  }
+  res.status(200).json({ msg: "Folder deleted!" });
 }
 
 async function userFilesGet(req, res) {
@@ -228,5 +266,8 @@ module.exports = {
   uploadFileToCloudinary,
   deleteFileGet,
   fileDetailsGet,
+  updateUserFolderGet,
+  updateUserFolderPost,
+  deleteUserFolderGet,
   handleOtherRoutes,
 };
