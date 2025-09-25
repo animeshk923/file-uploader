@@ -6,7 +6,7 @@
     <title>Update folder</title>
   </head>
   <body>
-    <form action="/update" method="post">
+    <form action="/folder/<%= folderId %>/update" method="post">
       <label for="folderName">New Folder name</label>
       <input type="text" name="folderName" id="folderName" />
 

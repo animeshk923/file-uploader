@@ -4,15 +4,6 @@ const controller = require("../controllers/index");
 const passport = require("passport");
 const { isAuth, isNotLoggedIn } = require("../auth/authMiddleware");
 const multer = require("multer");
-
-// const storage = multer.diskStorage({
-//   destination: "./public/files",
-//   filename: function (req, file, cb) {
-//     filePath = "./public/files/" + file.originalname;
-//     cb(null, file.originalname);
-//   },
-// });
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -48,8 +39,7 @@ appRoute.get(
 appRoute.post(
   "/folder/:folderId/update",
   isAuth,
-  controller.updateUserFolderPost,
-  controller.homepageGet
+  controller.updateUserFolderPost
 );
 appRoute.get(
   "/folder/:folderId/delete",

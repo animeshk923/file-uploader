@@ -161,7 +161,10 @@ async function userFolderGet(req, res) {
 }
 
 async function updateUserFolderGet(req, res) {
-  res.render("updateFolder");
+  console.log("folderId:", req.params.folderId);
+  const folder_id = req.params.folderId;
+
+  res.render("updateFolder", { folderId: folder_id });
 }
 
 // update folder info
@@ -172,14 +175,13 @@ async function updateUserFolderPost(req, res, next) {
   try {
     await prisma.folder.update({
       data: { folderName: folder_name },
-      where: { folderId: folder_id },
+      where: { folderId: Number(folder_id) },
     });
   } catch (err) {
     console.log(err);
     res.json({ error: err });
   }
-  next();
-  // res.json({ msg: "File info updated!" });
+  res.redirect("/home");
 }
 
 // delete folder (check implementation) (delete link implementation in ejs remaining)
