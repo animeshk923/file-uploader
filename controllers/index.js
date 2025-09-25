@@ -66,12 +66,7 @@ async function logInGet(req, res) {
 }
 
 async function homepageGet(req, res) {
-  const userId = req.user.id;
-  // console.log(userId);
-  const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  console.log("folders:", folders);
-
-  res.render("home", { userFolders: folders });
+  res.render("home");
 }
 
 async function logOutGet(req, res, next) {
@@ -170,7 +165,7 @@ async function updateUserFolderGet(req, res) {
 }
 
 // update folder info
-async function updateUserFolderPost(req, res) {
+async function updateUserFolderPost(req, res, next) {
   const folder_name = req.body.folderName;
   const folder_id = req.params.folderId;
 
@@ -183,7 +178,8 @@ async function updateUserFolderPost(req, res) {
     console.log(err);
     res.json({ error: err });
   }
-  res.json({ msg: "File info updated!" });
+  next();
+  // res.json({ msg: "File info updated!" });
 }
 
 // delete folder (check implementation) (delete link implementation in ejs remaining)

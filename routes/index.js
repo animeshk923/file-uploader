@@ -48,7 +48,8 @@ appRoute.get(
 appRoute.post(
   "/folder/:folderId/update",
   isAuth,
-  controller.updateUserFolderPost
+  controller.updateUserFolderPost,
+  controller.homepageGet
 );
 appRoute.get(
   "/folder/:folderId/delete",
