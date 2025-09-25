@@ -40,9 +40,9 @@ model Folder {
 }
 
 model File {
-  fileId     Int    @id @unique @default(autoincrement())
-  fileName   String @unique
+  fileId     Int     @id @unique @default(autoincrement())
+  fileName   String  @unique
   folderId   Int // scalar relational field
-  fileLink   String @unique
-  fileFolder Folder @relation(fields: [folderId], references: [folderId])
+  fileURL   String? @unique
+  fileFolder Folder  @relation(fields: [folderId], references: [folderId])
 }

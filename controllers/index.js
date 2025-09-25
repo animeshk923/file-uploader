@@ -78,29 +78,9 @@ async function logOutGet(req, res, next) {
   });
 }
 
-async function uploadFilePost(req, res) {
-  // console.log(req.file);
-  const { folder_id } = req.body;
-  const fileName = req.file.originalname;
-  console.log("fileName:", fileName);
-
-  // create file link in database
-  try {
-    await prisma.file.create({
-      data: {
-        fileName: fileName,
-        folderId: Number(folder_id),
-      },
-    });
-    // res.json({ message: "Successfully uploaded files" });
-  } catch (err) {
-    console.error(err);
-    res.json({ message: err });
-  }
-}
-
 async function deleteFileGet(req, res) {
   const file_id = req.params.fileId;
+  const folder_id = req.params.folderId;
   console.log("fileId:", file_id);
 
   try {
@@ -111,7 +91,8 @@ async function deleteFileGet(req, res) {
     console.log(err);
     res.json({ error: err });
   }
-  res.status(200).json({ msg: "File deleted!" });
+  // res.status(200).json({ msg: "File deleted!" });
+  res.redirect(`/folder/${folder_id}`);
 }
 
 async function createFolderGet(req, res) {
@@ -186,15 +167,16 @@ async function deleteUserFolderGet(req, res) {
   const folder_id = req.params.folderId;
 
   try {
-    // delete link from database
-    await prisma.folder.delete({ where: { folderId: Number(folder_id) } });
     // delete from cloudinary (implementation remaining)
-    // if folder delete, delete content inside too?
+
+    // delete all files link from folder
+    await prisma.file.deleteMany({ where: { folderId: Number(folder_id) } });
+    // delete folder link from database
+    await prisma.folder.delete({ where: { folderId: Number(folder_id) } });
   } catch (err) {
     console.log(err);
     res.json({ error: err });
   }
-  // res.status(200).json({ msg: "Folder deleted!" });
   res.status(200).redirect("/home");
 }
 
@@ -205,8 +187,8 @@ async function userFilesGet(req, res) {
 async function uploadFileToCloudinary(req, res, next) {
   const byteArrayBuffer = req.file.buffer;
   console.log(req.file.originalname);
+  console.log("req.fileIinCloudinary: ", req.newFileId);
   // const options = { use_filename: true };
-  // let file_info = "";
 
   new Promise((resolve, reject) => {
     cloudinary.uploader
@@ -225,26 +207,50 @@ async function uploadFileToCloudinary(req, res, next) {
       console.log("upload result", uploadResult);
 
       // add secure media url to database
-      // addUrlToDB(uploadResult);
-      res.status(200).json({
-        message: "Successfully uploaded files",
-        fileInfo: uploadResult,
-        originalName: req.file.originalname,
-      });
-      next();
+      addUrlToDB(uploadResult.secure_url, req.newFileId);
     })
     .catch((err) => {
       console.error(err);
       res.status(404).json({ error: err });
     });
+  res.redirect("/home");
+}
+
+async function uploadFilePost(req, res, next) {
+  console.log("reqBodyInUploadPost", req.body);
+
+  // add case if no folder selected then what
+  const { folder_id } = req.body;
+  const fileName = req.file.originalname;
+
+  // create file link in database
+  try {
+    const createdFile = await prisma.file.create({
+      data: {
+        fileName: fileName,
+        folderId: Number(folder_id),
+      },
+    });
+
+    const fileId = createdFile.fileId;
+    req.newFileId = fileId;
+
+    next();
+  } catch (err) {
+    console.error(err);
+    res.json({ message: err });
+  }
 }
 
 async function fileDetailsGet(req, res) {
-  res.render("partials/fileDetails");
+  res.render("fileDetails");
 }
 
-async function handleOtherRoutes(req, res) {
-  res.json({ message: "404 NOT FOUND!" });
+async function addUrlToDB(secureUrl, file_id) {
+  await prisma.file.update({
+    data: { fileURL: secureUrl },
+    where: { fileId: file_id },
+  });
 }
 module.exports = {
   signUpGet,
@@ -266,4 +272,33 @@ module.exports = {
   updateUserFolderPost,
   deleteUserFolderGet,
   handleOtherRoutes,
+};
+
+async function handleOtherRoutes(req, res) {
+  res.json({ message: "404 NOT FOUND!" });
+}
+
+uploadResultFormat = {
+  asset_id: "1534594ed4764efb6c4f4bd91674b466",
+  public_id: "file_od859q",
+  version: 1758814938,
+  version_id: "7a6db646c8cdc437e6bd0a89073fccf1",
+  signature: "f131122cb74b5a682ed600d489420b2401ee67d7",
+  width: 832,
+  height: 1248,
+  format: "jpg",
+  resource_type: "image",
+  created_at: "2025-09-25T15:42:18Z",
+  tags: [],
+  bytes: 618454,
+  type: "upload",
+  etag: "377f3299e15c8320f39b745c6e4f4d03",
+  placeholder: false,
+  url: "http://res.cloudinary.com/dwdp7afus/image/upload/v1758814938/file_od859q.jpg",
+  secure_url:
+    "https://res.cloudinary.com/dwdp7afus/image/upload/v1758814938/file_od859q.jpg",
+  asset_folder: "",
+  display_name: "file_od859q",
+  original_filename: "file",
+  api_key: "514278498221124",
 };

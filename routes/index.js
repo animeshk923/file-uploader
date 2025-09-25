@@ -24,8 +24,8 @@ appRoute.get("/logout", isAuth, controller.logOutGet);
 appRoute.post(
   "/upload",
   upload.single("upload_file"),
-  controller.uploadFileToCloudinary,
-  controller.uploadFilePost
+  controller.uploadFilePost,
+  controller.uploadFileToCloudinary
 );
 // appRoute.post("/upload", upload.none(), controller.uploadFilePost);
 appRoute.get("/newFolder", isAuth, controller.createFolderGet);
