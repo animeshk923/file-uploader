@@ -121,10 +121,7 @@ async function createFolderGet(req, res) {
 }
 
 async function createFolderPost(req, res) {
-  // console.log("req body:", req.body);
   const { folderName } = req.body;
-
-  // console.log("typeof:", typeof folderName);
   const userId = req.user.id;
 
   try {
@@ -134,7 +131,7 @@ async function createFolderPost(req, res) {
         folderName: folderName,
       },
     });
-    res.json({ result: "FOLDER CREATED!" });
+    res.redirect("/home");
   } catch (err) {
     console.error(err);
     res.json({ message: err });
@@ -187,17 +184,18 @@ async function updateUserFolderPost(req, res, next) {
 // delete folder (check implementation) (delete link implementation in ejs remaining)
 async function deleteUserFolderGet(req, res) {
   const folder_id = req.params.folderId;
-  console.log("fileId:", file_id);
 
   try {
     // delete link from database
     await prisma.folder.delete({ where: { folderId: Number(folder_id) } });
     // delete from cloudinary (implementation remaining)
+    // if folder delete, delete content inside too?
   } catch (err) {
     console.log(err);
     res.json({ error: err });
   }
-  res.status(200).json({ msg: "Folder deleted!" });
+  // res.status(200).json({ msg: "Folder deleted!" });
+  res.status(200).redirect("/home");
 }
 
 async function userFilesGet(req, res) {
