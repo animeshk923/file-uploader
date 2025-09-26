@@ -4,7 +4,7 @@ Your Files
   <% files.forEach(item => { %>
   <li>
     <!-- TODO: update link to point to the secure url from database -->
-    <a href="/folder/<%= item.folderId %>/file/<%= item.fileName %>"
+    <a href="/folder/<%= item.folderId %>/file/<%= item.fileId %>/<%= item.fileName %>"
       ><%= item.fileName %></a
     >
     <br />

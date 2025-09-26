@@ -47,7 +47,7 @@ appRoute.get(
   controller.deleteUserFolderGet
 );
 appRoute.get(
-  "/folder/:folderId/file/:fileName",
+  "/folder/:folderId/file/:fileId/:fileName",
   isAuth,
   controller.userFilesGet
 );

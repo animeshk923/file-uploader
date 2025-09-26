@@ -181,7 +181,13 @@ async function deleteUserFolderGet(req, res) {
 }
 
 async function userFilesGet(req, res) {
-  res.json({ msg: "you reached here!" });
+  const file_id = req.params.fileId;
+  const fileInfo = await prisma.file.findUnique({
+    where: { fileId: Number(file_id) },
+  });
+  // console.log("fileUrl", fileInfo.fileURL);
+
+  res.redirect(`${fileInfo.fileURL}`);
 }
 
 async function uploadFileToCloudinary(req, res, next) {
