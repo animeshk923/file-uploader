@@ -52,7 +52,7 @@ appRoute.get(
   controller.userFilesGet
 );
 appRoute.get(
-  "/folder/:folderId/file/:fileName/details",
+  "/folder/:folderId/file/:fileId/:fileName/details",
   isAuth,
   controller.fileDetailsGet
 );

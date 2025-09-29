@@ -10,6 +10,7 @@ const {
 } = require("./auth/serialization");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("./prisma/generated/prisma");
+const { allFolderOfUser } = require("./controllers");
 const prisma = new PrismaClient();
 
 require("dotenv").config();
@@ -36,14 +37,7 @@ app.use(
 
 app.use(passport.session());
 
-app.use(async (req, res, next) => {
-  const userId = req.user.id;
-  // console.log(userId);
-  const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  console.log("folders:", folders);
-  res.locals.userFolders = folders;
-  next();
-});
+app.use(allFolderOfUser);
 
 passport.use(localStrategyConfig);
 

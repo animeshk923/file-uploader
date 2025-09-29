@@ -69,6 +69,18 @@ async function homepageGet(req, res) {
   res.render("home");
 }
 
+/**
+ * Makes all folders of current logged in user available globally in the app
+ */
+async function allFolderOfUser(req, res, next) {
+  const userId = req.user.id;
+  // console.log(userId);
+  const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  console.log("folders:", folders);
+  res.locals.userFolders = folders;
+  next();
+}
+
 async function logOutGet(req, res, next) {
   req.logout((err) => {
     if (err) {
@@ -81,18 +93,40 @@ async function logOutGet(req, res, next) {
 async function deleteFileGet(req, res) {
   const file_id = req.params.fileId;
   const folder_id = req.params.folderId;
-  console.log("fileId:", file_id);
+  const file_name = req.params.fileName;
+  // console.log("fileId:", file_id);
+  // console.log("file_name:", file_name);
 
   try {
     // delete link from database
+    const file = await prisma.file.findUnique({
+      where: { fileName: file_name },
+    });
+    const public_id = file.fileName;
+    // console.log("public_id:", file.fileName);
+
     await prisma.file.delete({ where: { fileId: Number(file_id) } });
-    // delete from cloudinary (implementation remaining)
+
+    // delete from cloudinary
+    cloudinary.uploader
+      .destroy(public_id)
+      .then((result) => {
+        if (result == "ok") {
+          console.log(result);
+          res.redirect(`/folder/${folder_id}`);
+        } else {
+          res.status(500).json({ error: result });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: err });
+      });
   } catch (err) {
     console.log(err);
     res.json({ error: err });
   }
   // res.status(200).json({ msg: "File deleted!" });
-  res.redirect(`/folder/${folder_id}`);
 }
 
 async function createFolderGet(req, res) {
@@ -190,40 +224,8 @@ async function userFilesGet(req, res) {
   res.redirect(`${fileInfo.fileURL}`);
 }
 
-async function uploadFileToCloudinary(req, res, next) {
-  const byteArrayBuffer = req.file.buffer;
-  console.log(req.file.originalname);
-  console.log("req.fileIinCloudinary: ", req.newFileId);
-  // const options = { use_filename: true };
-
-  new Promise((resolve, reject) => {
-    cloudinary.uploader
-      .upload_stream({ use_filename: true }, (error, uploadResult) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(uploadResult);
-      })
-      .end(byteArrayBuffer);
-  })
-    .then((uploadResult) => {
-      console.log(
-        `Buffer upload_stream wth promise success - ${uploadResult.public_id}`
-      );
-      console.log("upload result", uploadResult);
-
-      // add secure media url to database
-      addUrlToDB(uploadResult.secure_url, req.newFileId);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(404).json({ error: err });
-    });
-  res.redirect("/home");
-}
-
 async function uploadFilePost(req, res, next) {
-  console.log("reqBodyInUploadPost", req.body);
+  // console.log("reqBodyInUploadPost", req.body);
 
   // add case if no folder selected then what
   const { folder_id } = req.body;
@@ -248,13 +250,65 @@ async function uploadFilePost(req, res, next) {
   }
 }
 
+async function uploadFileToCloudinary(req, res) {
+  const byteArrayBuffer = req.file.buffer;
+  // console.log("originalName in cloudinary:", req.file);
+  // console.log("req.fileIinCloudinary: ", req.newFileId);
+  const options = { public_id: req.file.originalname };
+
+  new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(options, (error, uploadResult) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(uploadResult);
+      })
+      .end(byteArrayBuffer);
+  })
+    .then((uploadResult) => {
+      console.log(
+        `Buffer upload_stream wth promise success - ${uploadResult.public_id}`
+      );
+      console.log("upload result", uploadResult);
+
+      // add secure media url to database
+      addUrlToDB(uploadResult.secure_url, req.newFileId);
+
+      // add metadata to database
+      addMetaToDB(uploadResult.bytes, uploadResult.created_at, req.newFileId);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(404).json({ error: err });
+    });
+  res.redirect("/home");
+}
+
 async function fileDetailsGet(req, res) {
+  const file_id = req.params.fileId;
+  console.log("file_idindetails:", file_id);
+
+  // await prisma.file.findUnique({ where: { fileId: file_id } });
   res.render("fileDetails");
 }
 
 async function addUrlToDB(secureUrl, file_id) {
   await prisma.file.update({
     data: { fileURL: secureUrl },
+    where: { fileId: file_id },
+  });
+}
+
+async function addMetaToDB(fileSize, fileCreateTime, file_id) {
+  console.log("filesize: ", fileSize);
+  console.log("typeof filesize: ", typeof fileSize);
+  const MB = Number(fileSize) / 1000000;
+
+  console.log("MB:", MB);
+
+  await prisma.file.update({
+    data: { fileSize: MB, fileTime: fileCreateTime },
     where: { fileId: file_id },
   });
 }
@@ -265,6 +319,7 @@ module.exports = {
   logOutGet,
   validateUser,
   homepageGet,
+  allFolderOfUser,
   redirectSignUp,
   uploadFilePost,
   createFolderGet,
@@ -285,26 +340,26 @@ async function handleOtherRoutes(req, res) {
 }
 
 uploadResultFormat = {
-  asset_id: "1534594ed4764efb6c4f4bd91674b466",
-  public_id: "file_od859q",
-  version: 1758814938,
-  version_id: "7a6db646c8cdc437e6bd0a89073fccf1",
-  signature: "f131122cb74b5a682ed600d489420b2401ee67d7",
-  width: 832,
-  height: 1248,
-  format: "jpg",
+  asset_id: "c9b0b0fdc7a43edb5cc6140012372463",
+  public_id: "em-exp-5.png",
+  version: 1759155265,
+  version_id: "55c712694ff51ce121d48fa8e6c5f039",
+  signature: "a8d24802b17126928917fa3022c93bdf7078b36a",
+  width: 1675,
+  height: 1596,
+  format: "png",
   resource_type: "image",
-  created_at: "2025-09-25T15:42:18Z",
+  created_at: "2025-09-29T14:14:25Z",
   tags: [],
-  bytes: 618454,
+  bytes: 114303,
   type: "upload",
-  etag: "377f3299e15c8320f39b745c6e4f4d03",
+  etag: "db98b233edda2e3b52ff159b34774f62",
   placeholder: false,
-  url: "http://res.cloudinary.com/dwdp7afus/image/upload/v1758814938/file_od859q.jpg",
+  url: "http://res.cloudinary.com/dwdp7afus/image/upload/v1759155265/em-exp-5.png.png",
   secure_url:
-    "https://res.cloudinary.com/dwdp7afus/image/upload/v1758814938/file_od859q.jpg",
+    "https://res.cloudinary.com/dwdp7afus/image/upload/v1759155265/em-exp-5.png.png",
   asset_folder: "",
-  display_name: "file_od859q",
+  display_name: "em-exp-5.png",
   original_filename: "file",
   api_key: "514278498221124",
 };

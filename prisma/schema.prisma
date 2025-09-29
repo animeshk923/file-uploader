@@ -40,9 +40,11 @@ model Folder {
 }
 
 model File {
-  fileId     Int     @id @unique @default(autoincrement())
-  fileName   String  @unique
+  fileId     Int       @id @unique @default(autoincrement())
+  fileName   String    @unique
   folderId   Int // scalar relational field
-  fileURL   String? @unique
-  fileFolder Folder  @relation(fields: [folderId], references: [folderId])
+  fileURL    String?   @unique
+  fileSize   Decimal?  @db.Decimal(10, 3)
+  fileTime   DateTime?
+  fileFolder Folder    @relation(fields: [folderId], references: [folderId])
 }
