@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("../prisma/generated/prisma");
 const prisma = new PrismaClient();
 const fs = require("node:fs");
-// import { v2 as cloudinary } from "cloudinary";
 const cloudinary = require("cloudinary").v2;
 // Sign up validation
 const alphaErr = "must only contain letters.";
@@ -294,7 +293,7 @@ async function fileDetailsGet(req, res) {
   });
   console.log("files:", files);
 
-  res.render("fileDetails", {fileDetails: files});
+  res.render("fileDetails", { fileDetails: files });
 }
 
 async function addUrlToDB(secureUrl, file_id) {
@@ -342,28 +341,3 @@ module.exports = {
 async function handleOtherRoutes(req, res) {
   res.json({ message: "404 NOT FOUND!" });
 }
-
-uploadResultFormat = {
-  asset_id: "c9b0b0fdc7a43edb5cc6140012372463",
-  public_id: "em-exp-5.png",
-  version: 1759155265,
-  version_id: "55c712694ff51ce121d48fa8e6c5f039",
-  signature: "a8d24802b17126928917fa3022c93bdf7078b36a",
-  width: 1675,
-  height: 1596,
-  format: "png",
-  resource_type: "image",
-  created_at: "2025-09-29T14:14:25Z",
-  tags: [],
-  bytes: 114303,
-  type: "upload",
-  etag: "db98b233edda2e3b52ff159b34774f62",
-  placeholder: false,
-  url: "http://res.cloudinary.com/dwdp7afus/image/upload/v1759155265/em-exp-5.png.png",
-  secure_url:
-    "https://res.cloudinary.com/dwdp7afus/image/upload/v1759155265/em-exp-5.png.png",
-  asset_folder: "",
-  display_name: "em-exp-5.png",
-  original_filename: "file",
-  api_key: "514278498221124",
-};

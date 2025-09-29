@@ -5,7 +5,7 @@ const passport = require("passport");
 const { isAuth, isNotLoggedIn } = require("../auth/authMiddleware");
 const multer = require("multer");
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage, limits: { fileSize: 1048576 * 10 } });
 
 appRoute.get("/", isNotLoggedIn, controller.redirectSignUp);
 appRoute.get("/signup", isNotLoggedIn, controller.signUpGet);
