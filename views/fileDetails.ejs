@@ -7,9 +7,12 @@
   </head>
   <body>
     <ul>
-      <li>File Name: </li>
-      <li>File Size: </li>
-      <li>Upload Time: </li>
+      <li>File Name: <%= fileDetails.fileName %></li>
+      <li>File Size: <%= fileDetails.fileSize %> MB</li>
+      <li>Upload Time: <%= fileDetails.fileTime %></li>
+      <li>
+        <a href="<%= fileDetails.fileURL %>" download>Download File</a>
+      </li>
     </ul>
   </body>
 </html>

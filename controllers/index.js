@@ -76,7 +76,7 @@ async function allFolderOfUser(req, res, next) {
   const userId = req.user.id;
   // console.log(userId);
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  console.log("folders:", folders);
+  // console.log("folders:", folders);
   res.locals.userFolders = folders;
   next();
 }
@@ -287,10 +287,14 @@ async function uploadFileToCloudinary(req, res) {
 
 async function fileDetailsGet(req, res) {
   const file_id = req.params.fileId;
-  console.log("file_idindetails:", file_id);
+  // console.log("file_idindetails:", file_id);
 
-  // await prisma.file.findUnique({ where: { fileId: file_id } });
-  res.render("fileDetails");
+  const files = await prisma.file.findUnique({
+    where: { fileId: Number(file_id) },
+  });
+  console.log("files:", files);
+
+  res.render("fileDetails", {fileDetails: files});
 }
 
 async function addUrlToDB(secureUrl, file_id) {
