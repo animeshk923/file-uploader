@@ -73,9 +73,7 @@ async function homepageGet(req, res) {
  */
 async function allFolderOfUser(req, res, next) {
   const userId = req.user.id;
-  // console.log(userId);
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  // console.log("folders:", folders);
   res.locals.userFolders = folders;
   next();
 }
@@ -93,8 +91,6 @@ async function deleteFileGet(req, res) {
   const file_id = req.params.fileId;
   const folder_id = req.params.folderId;
   const file_name = req.params.fileName;
-  // console.log("fileId:", file_id);
-  // console.log("file_name:", file_name);
 
   try {
     // delete link from database
@@ -102,7 +98,6 @@ async function deleteFileGet(req, res) {
       where: { fileName: file_name },
     });
     const public_id = file.fileName;
-    // console.log("public_id:", file.fileName);
 
     await prisma.file.delete({ where: { fileId: Number(file_id) } });
 
@@ -125,12 +120,9 @@ async function deleteFileGet(req, res) {
     console.log(err);
     res.json({ error: err });
   }
-  // res.status(200).json({ msg: "File deleted!" });
 }
 
 async function createFolderGet(req, res) {
-  // console.log(req.user);
-
   res.render("newFolder");
 }
 
@@ -160,7 +152,6 @@ async function createFolderPost(req, res) {
 
 // render files inside the folder
 async function userFolderGet(req, res) {
-  // console.log(req.user);
   const { folderId } = req.params;
   try {
     const files = await prisma.file.findMany({
@@ -201,12 +192,11 @@ async function updateUserFolderPost(req, res, next) {
   res.redirect("/home");
 }
 
-// delete folder (check implementation) (delete link implementation in ejs remaining)
+// delete folder
 async function deleteUserFolderGet(req, res) {
   const folder_id = req.params.folderId;
 
   try {
-    // delete from cloudinary
     // FLOW: cloudinary first --> then the DB file records --> then the folder record
     /**
      * Array of string to store public ids of assets.
@@ -225,6 +215,7 @@ async function deleteUserFolderGet(req, res) {
     });
     console.log("assets", public_ids);
 
+    // delete from cloudinary (WARNING: uses api credits/limits)
     cloudinary.api
       .delete_resources(public_ids)
       .then((result) => {
@@ -233,8 +224,6 @@ async function deleteUserFolderGet(req, res) {
       .catch((err) => {
         res.status(500).json({ error: err });
       });
-
-    // console.log(filesInFolder);
 
     // delete all files link from folder
     await prisma.file.deleteMany({ where: { folderId: Number(folder_id) } });
@@ -252,25 +241,22 @@ async function userFilesGet(req, res) {
   const fileInfo = await prisma.file.findUnique({
     where: { fileId: Number(file_id) },
   });
-  // console.log("fileUrl", fileInfo.fileURL);
 
   res.redirect(`${fileInfo.fileURL}`);
 }
 
 async function uploadFilePost(req, res, next) {
-  // console.log("reqBodyInUploadPost", req.body);
-
-  // case if no folder selected then what
   const { folder_id } = req.body;
   const fileName = req.file.originalname;
 
-  // create file link in database
   try {
+    // case if no folder selected
     if (folder_id == "") {
       res.status(500).render("home", {
         messages: `you must select a FOLDER to upload.`,
       });
     } else {
+      // create file link in database
       const createdFile = await prisma.file.create({
         data: {
           fileName: fileName,
@@ -291,8 +277,6 @@ async function uploadFilePost(req, res, next) {
 
 async function uploadFileToCloudinary(req, res) {
   const byteArrayBuffer = req.file.buffer;
-  // console.log("originalName in cloudinary:", req.file);
-  // console.log("req.fileIinCloudinary: ", req.newFileId);
   const options = { public_id: req.file.originalname };
 
   new Promise((resolve, reject) => {
@@ -354,6 +338,10 @@ async function addMetaToDB(fileSize, fileCreateTime, file_id) {
     where: { fileId: file_id },
   });
 }
+
+async function handleOtherRoutes(req, res) {
+  res.json({ message: "404 NOT FOUND!" });
+}
 module.exports = {
   signUpGet,
   signUpPost,
@@ -376,7 +364,3 @@ module.exports = {
   deleteUserFolderGet,
   handleOtherRoutes,
 };
-
-async function handleOtherRoutes(req, res) {
-  res.json({ message: "404 NOT FOUND!" });
-}

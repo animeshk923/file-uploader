@@ -11,7 +11,6 @@ const {
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("./prisma/generated/prisma");
 const { allFolderOfUser } = require("./controllers");
-const prisma = new PrismaClient();
 
 require("dotenv").config();
 
