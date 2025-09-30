@@ -201,16 +201,45 @@ async function deleteUserFolderGet(req, res) {
 
   try {
     // delete from cloudinary (implementation remaining)
+    // TODO: remove all files from cloudinary
+    // FLOW: cloudinary first --> then the DB file records --> then the folder record
+    /**
+     * Array of string to store public ids of assets.
+     * @type {string[]}
+     * @description Max item = 100.
+     * {@link https://cloudinary.com/documentation/admin_api#delete_resources_required_parameters-1 | Cloudinary Doc}
+     */
+    const public_ids = [];
+    const filesInFolder = await prisma.file.findMany({
+      take: 100,
+      where: { folderId: Number(folder_id) },
+    });
+
+    filesInFolder.forEach((item) => {
+      public_ids.push(item.fileName);
+    });
+    console.log("assets", public_ids);
+
+    cloudinary.api
+      .delete_resources(public_ids)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      });
+
+    // console.log(filesInFolder);
 
     // delete all files link from folder
     await prisma.file.deleteMany({ where: { folderId: Number(folder_id) } });
     // delete folder link from database
     await prisma.folder.delete({ where: { folderId: Number(folder_id) } });
+    res.status(200).redirect("/home");
   } catch (err) {
     console.log(err);
     res.json({ error: err });
   }
-  res.status(200).redirect("/home");
 }
 
 async function userFilesGet(req, res) {
