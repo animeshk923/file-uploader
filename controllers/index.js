@@ -109,12 +109,12 @@ async function deleteFileGet(req, res) {
     // delete from cloudinary
     cloudinary.uploader
       .destroy(public_id)
-      .then((result) => {
-        if (result == "ok") {
-          console.log(result);
+      .then((response) => {
+        if (response.result == "ok") {
+          console.log(response);
           res.redirect(`/folder/${folder_id}`);
         } else {
-          res.status(500).json({ error: result });
+          res.status(500).json({ error: response });
         }
       })
       .catch((err) => {
@@ -139,13 +139,19 @@ async function createFolderPost(req, res) {
   const userId = req.user.id;
 
   try {
-    await prisma.folder.create({
-      data: {
-        userId: userId,
-        folderName: folderName,
-      },
-    });
-    res.redirect("/home");
+    if (folderName == "") {
+      res
+        .status(500)
+        .render("home", { messages: `folder name can't be empty` });
+    } else {
+      await prisma.folder.create({
+        data: {
+          userId: userId,
+          folderName: folderName,
+        },
+      });
+      res.redirect("/home");
+    }
   } catch (err) {
     console.error(err);
     res.json({ message: err });
@@ -200,8 +206,7 @@ async function deleteUserFolderGet(req, res) {
   const folder_id = req.params.folderId;
 
   try {
-    // delete from cloudinary (implementation remaining)
-    // TODO: remove all files from cloudinary
+    // delete from cloudinary
     // FLOW: cloudinary first --> then the DB file records --> then the folder record
     /**
      * Array of string to store public ids of assets.
@@ -255,23 +260,29 @@ async function userFilesGet(req, res) {
 async function uploadFilePost(req, res, next) {
   // console.log("reqBodyInUploadPost", req.body);
 
-  // add case if no folder selected then what
+  // case if no folder selected then what
   const { folder_id } = req.body;
   const fileName = req.file.originalname;
 
   // create file link in database
   try {
-    const createdFile = await prisma.file.create({
-      data: {
-        fileName: fileName,
-        folderId: Number(folder_id),
-      },
-    });
+    if (folder_id == "") {
+      res.status(500).render("home", {
+        messages: `you must select a FOLDER to upload.`,
+      });
+    } else {
+      const createdFile = await prisma.file.create({
+        data: {
+          fileName: fileName,
+          folderId: Number(folder_id),
+        },
+      });
 
-    const fileId = createdFile.fileId;
-    req.newFileId = fileId;
+      const fileId = createdFile.fileId;
+      req.newFileId = fileId;
 
-    next();
+      next();
+    }
   } catch (err) {
     console.error(err);
     res.json({ message: err });
@@ -315,7 +326,6 @@ async function uploadFileToCloudinary(req, res) {
 
 async function fileDetailsGet(req, res) {
   const file_id = req.params.fileId;
-  // console.log("file_idindetails:", file_id);
 
   const files = await prisma.file.findUnique({
     where: { fileId: Number(file_id) },
