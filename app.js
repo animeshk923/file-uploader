@@ -36,8 +36,6 @@ app.use(
 
 app.use(passport.session());
 
-app.use(allFolderOfUser);
-
 passport.use(localStrategyConfig);
 
 passport.serializeUser(serializerFunction);

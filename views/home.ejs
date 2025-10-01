@@ -10,6 +10,8 @@
 
     <%- include('partials/errors') %> <br /><br />
     <h1>HOME</h1>
+
+    <h4>Limited to images with size under 10MB</h4>
     <form action="/upload" method="post" enctype="multipart/form-data">
       <input type="file" name="upload_file" />
 
@@ -29,7 +31,7 @@
     <br />
 
     <p>Need a new folder?</p>
-  
+
     <a href="/newFolder">Create a folder</a>
 
     <br /><br />

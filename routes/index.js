@@ -19,6 +19,7 @@ appRoute.post(
     failureMessage: true,
   })
 );
+appRoute.use(controller.allFolderOfUser);
 appRoute.get("/home", isAuth, controller.homepageGet);
 appRoute.get("/logout", isAuth, controller.logOutGet);
 appRoute.post(
