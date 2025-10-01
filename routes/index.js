@@ -19,8 +19,13 @@ appRoute.post(
     failureMessage: true,
   })
 );
-appRoute.use(controller.allFolderOfUser);
-appRoute.get("/home", isAuth, controller.homepageGet);
+
+appRoute.get(
+  "/home",
+  isAuth,
+  controller.allFolderOfUser,
+  controller.homepageGet
+);
 appRoute.get("/logout", isAuth, controller.logOutGet);
 appRoute.post(
   "/upload",
@@ -64,4 +69,5 @@ appRoute.get(
 );
 
 appRoute.get("/{*splat}", controller.handleOtherRoutes);
+
 module.exports = appRoute;

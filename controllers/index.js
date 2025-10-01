@@ -81,6 +81,8 @@ async function homepageGet(req, res) {
  * Makes all folders of current logged in user available globally in the app
  */
 async function allFolderOfUser(req, res, next) {
+  console.log('req.user', req.user);
+  
   const userId = req.user.id;
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
   res.locals.userFolders = folders;
