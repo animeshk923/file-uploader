@@ -137,5 +137,5 @@ dist
 
 *ca.pem
 
-/generated/prisma
-prisma/generated/
+# /generated/prisma
+# prisma/generated/
