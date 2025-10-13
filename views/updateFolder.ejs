@@ -4,15 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Update folder</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <form action="/folder/<%= folderId %>/update" method="post">
-      <label for="folderName">New Folder name</label>
-      <input type="text" name="folderName" id="folderName" />
+    <%- include('partials/header') %>
 
-      <br /><br />
+    <main class="container">
+      <div class="card">
+        <form action="/folder/<%= folderId %>/update" method="post">
+          <label for="folderName">New Folder name</label>
+          <input type="text" name="folderName" id="folderName" />
 
-      <button type="submit">Update</button>
-    </form>
+          <div style="margin-top: 12px">
+            <button type="submit">Update</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
   </body>
 </html>

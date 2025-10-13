@@ -4,15 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Details</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <ul>
-      <li>File Name: <%= fileDetails.fileName %></li>
-      <li>File Size: <%= fileDetails.fileSize %> MB</li>
-      <li>Upload Time: <%= fileDetails.fileTime %></li>
-      <li>
-        <a href="<%= fileDetails.fileURL %>" download>Download File</a>
-      </li>
-    </ul>
+    <%- include('partials/header') %>
+
+    <main class="container">
+      <div class="card">
+        <h2>File Details</h2>
+        <ul>
+          <li>File Name: <%= fileDetails.fileName %></li>
+          <li>File Size: <%= fileDetails.fileSize %> MB</li>
+          <li>Upload Time: <%= fileDetails.fileTime %></li>
+          <li>
+            <a href="<%= fileDetails.fileURL %>" download>Download File</a>
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
   </body>
 </html>

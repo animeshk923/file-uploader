@@ -4,41 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Page</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/logout') %> <br /><br />
+    <%- include('partials/header') %>
 
-    <%- include('partials/errors') %> <br /><br />
-    <h1>HOME</h1>
+    <main class="container">
+      <div class="card">
+        <%- include('partials/errors') %>
 
-    <h4>Limited to images with size under 10MB</h4>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-      <input type="file" name="upload_file" />
+        <h1>Home</h1>
+        <p class="muted">Limited to images with size under 10MB</p>
 
-      <br /><br />
-      <label for="folders">Choose folder:</label>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <label for="upload_file">Choose file</label>
+          <input id="upload_file" type="file" name="upload_file" />
 
-      <select name="folder_id" id="folders">
-        <option value="">Select</option>
-        <% userFolders.forEach(item => { %>
-        <option value="<%= item.folderId %> "><%= item.folderName %></option>
-        <% }) %>
-      </select>
+          <label for="folders">Choose folder:</label>
+          <select name="folder_id" id="folders">
+            <option value="">Select</option>
+            <% userFolders.forEach(item => { %>
+            <option value="<%= item.folderId %>"><%= item.folderName %></option>
+            <% }) %>
+          </select>
 
-      <button type="submit">Upload File</button>
-    </form>
+          <div style="margin-top: 12px">
+            <button type="submit">Upload File</button>
+          </div>
+        </form>
 
-    <br />
+        <hr />
+        <h3>Your folders</h3>
+        <%- include('partials/userFolders') %>
+      </div>
+    </main>
 
-    <p>Need a new folder?</p>
-
-    <a href="/newFolder">Create a folder</a>
-
-    <br /><br />
-
-    <a href="/"></a>
-
-    <h3>Your folders</h3>
-    <%- include('partials/userFolders') %>
+    <%- include('partials/footer') %>
   </body>
 </html>

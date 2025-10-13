@@ -4,24 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Log In</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include("partials/errors") %>
-    <h1>please log in</h1>
-    <form action="/login" method="POST">
-      <label for="email">Email</label>
-      <input id="email" name="email" placeholder="a@example.com" type="email" />
-      <br /><br />
+    <%- include('partials/header') %>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" />
-      <br /><br />
+    <main class="container">
+      <div class="card">
+        <%- include("partials/errors") %>
+        <h1>Please log in</h1>
+        <form action="/login" method="POST">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            placeholder="a@example.com"
+            type="email"
+          />
 
-      <button type="submit">Log In</button>
-    </form>
-    <br /><br />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" />
 
-    <p>Not registered?</p>
-    <a href="/signup">Click here to sign up</a>
+          <div style="margin-top: 12px">
+            <button type="submit">Log In</button>
+          </div>
+        </form>
+
+        <p class="muted">Not registered?</p>
+        <a class="button-like" href="/signup">Create an account</a>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
   </body>
 </html>

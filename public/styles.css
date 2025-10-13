@@ -1,0 +1,74 @@
+/* Minimal styling for file-uploader app */
+:root {
+  --bg: #f6f8fa;
+  --card: #ffffff;
+  --accent: #0b5fff;
+  --muted: #6b7280;
+}
+body {
+  font-family: Inter, system-ui, -apple-system, Roboto, "Segoe UI", Arial;
+  background: var(--bg);
+  color: #111827;
+  margin: 0;
+}
+.site-header {
+  background: var(--card);
+  border-bottom: 1px solid #e6e9ef;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-title {
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+}
+.nav-links a {
+  margin-left: 12px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.container {
+  max-width: 900px;
+  margin: 28px auto;
+  padding: 18px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  padding: 18px;
+}
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form select {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+a.button-like {
+  background: transparent;
+  color: var(--accent);
+  text-decoration: none;
+  display: inline-block;
+  padding: 6px 0;
+}
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+ul.errors {
+  color: #b91c1c;
+}

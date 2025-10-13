@@ -4,21 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create new Folder</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/logout') %> <br /><br />
+    <%- include('partials/header') %>
 
-    <%- include('partials/errors') %> <br /><br />
-    <!-- have a list of clubs by various users present here -->
-    <h3>Create new folder</h3>
-    <form action="/newFolder" method="post">
-      <label for="folderName">Folder name</label>
-      <input type="text" name="folderName" id="folderName" />
+    <main class="container">
+      <div class="card">
+        <%- include('partials/errors') %>
+        <h3>Create new folder</h3>
+        <form action="/newFolder" method="post">
+          <label for="folderName">Folder name</label>
+          <input type="text" name="folderName" id="folderName" />
 
-      <button type="submit">Create</button>
-    </form>
-    <br /><br />
+          <div style="margin-top: 12px">
+            <button type="submit">Create</button>
+          </div>
+        </form>
 
-    <a href="/home">Home</a>
+        <a class="button-like" href="/home">Home</a>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
   </body>
 </html>

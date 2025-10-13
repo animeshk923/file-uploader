@@ -10,7 +10,6 @@ const {
 } = require("./auth/serialization");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("./prisma/generated/prisma");
-const { allFolderOfUser } = require("./controllers");
 
 require("dotenv").config();
 
@@ -19,6 +18,9 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: false }));
+
+// serve static assets (css, client-side js, uploaded files etc.)
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
