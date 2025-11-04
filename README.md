@@ -1,3 +1,8 @@
+> [!WARNING]
+> Backend services will stop working due to exhaustion of free credits after Nov 20, 2025. Until I find a new platform, project may not be accessible for the time being.
+
+---
+
 A simple file upload web app with an EJS UI (no CSS).
 
 ## Features:
